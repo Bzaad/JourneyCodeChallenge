@@ -3,6 +3,7 @@ using RefactorMe.DontRefactor.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,11 +12,14 @@ namespace RefactorMe
     public class ProductDataConsolidator
     {
         public static List<Product> Get() {
+
             var l = new LawnmowerRepository().GetAll();
             var p = new PhoneCaseRepository().GetAll();
             var t = new TShirtRepository().GetAll();
-
+            
             var ps = new List<Product>();
+
+            var query = l.Select((lm, index) => new {index, lm});
 
             foreach (var i in l) {
                 ps.Add(new Product() {
@@ -120,7 +124,5 @@ namespace RefactorMe
 
             return ps;
         }
- 
- 
     }
 }
