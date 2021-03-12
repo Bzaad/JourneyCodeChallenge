@@ -1,128 +1,70 @@
 ﻿using RefactorMe.DontRefactor.Data.Implementation;
 using RefactorMe.DontRefactor.Models;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RefactorMe
 {
-    public class ProductDataConsolidator
+
+	public class ProductDataConsolidator
     {
-        public static List<Product> Get() {
+	    /// <summary>
+		/// Returns a list of consolidated products.
+		/// </summary>
+		/// <returns></returns>
+        public List<Product> GetProducts() {
+	        
+	        var products =
+				new LawnmowerRepository().GetAll().Select(l => new Product
+			{Id = l.Id, Name = l.Name, Price = l.Price, Type = l.GetType().Name})
+		.Concat(new PhoneCaseRepository().GetAll().Select(pc => new Product
+			{Id = pc.Id, Name = pc.Name, Price = pc.Price, Type = pc.GetType().Name}))
+		.Concat(new TShirtRepository().GetAll().Select(ts => new Product
+			{Id = ts.Id, Name = ts.Name, Price = ts.Price, Type = ts.GetType().Name}));
 
-            var l = new LawnmowerRepository().GetAll();
-            var p = new PhoneCaseRepository().GetAll();
-            var t = new TShirtRepository().GetAll();
-            
-            var ps = new List<Product>();
-
-            var query = l.Select((lm, index) => new {index, lm});
-
-            foreach (var i in l) {
-                ps.Add(new Product() {
-                    Id = i.Id,
-                    Name = i.Name,
-                    Price = i.Price,
-                    Type = "Lawnmower"
-                });
-            }
-
-            foreach (var i in p) {
-                ps.Add(new Product() {
-                    Id = i.Id,
-                    Name = i.Name,
-                    Price = i.Price,
-                    Type = "Phone Case"
-                });
-            }
-
-            foreach (var i in t) {
-                ps.Add(new Product() {
-                    Id = i.Id,
-                    Name = i.Name,
-                    Price = i.Price,
-                    Type = "T-Shirt"
-                });
-            }
-
-            return ps;
+	        return products.ToList();
         }
 
-        public static List<Product> GetInUSDollars() {
-            var l = new LawnmowerRepository().GetAll();
-            var p = new PhoneCaseRepository().GetAll();
-            var t = new TShirtRepository().GetAll();
+		/// <summary>
+		/// Returns a list of consolidated products in some other currency with the given exchange rate.
+		/// </summary>
+		/// <param name="exchangeRate"></param>
+		/// <returns></returns>
+		private List<Product> _GetInOtherCurrencies(double exchangeRate) 
+        {
+	        var ps = new List<Product>();
 
-            var ps = new List<Product>();
-
-            foreach (var i in l) {
-                ps.Add(new Product() {
-                    Id = i.Id,
-                    Name = i.Name,
-                    Price = i.Price * 0.76,
-                    Type = "Lawnmower"
-                });
-            }
-
-            foreach (var i in p) {
-                ps.Add(new Product() {
-                    Id = i.Id,
-                    Name = i.Name,
-                    Price = i.Price * 0.76,
-                    Type = "Phone Case"
-                });
-            }
-
-            foreach (var i in t) {
-                ps.Add(new Product() {
-                    Id = i.Id,
-                    Name = i.Name,
-                    Price = i.Price * 0.76,
-                    Type = "T-Shirt"
-                });
-            }
-
-            return ps;
+	        GetProducts().ForEach(prod =>
+	        {
+		        ps.Add(new Product()
+		        {
+			        Id = prod.Id,
+			        Name = prod.Name,
+			        Price = prod.Price * exchangeRate,
+			        Type = prod.Type
+		        });
+	        });
+	        return ps;
         }
 
-        public static List<Product> GetInEuros() {
-            var l = new LawnmowerRepository().GetAll();
-            var p = new PhoneCaseRepository().GetAll();
-            var t = new TShirtRepository().GetAll();
+		/// <summary>
+		/// Returns a list of consolidated products with their prices in US Dollar.
+		/// </summary>
+		/// <param name="exchangeRate"></param>
+		/// <returns></returns>
+		public List<Product> GetInUSDollars(double exchangeRate)
+        {
+	        return _GetInOtherCurrencies(exchangeRate);
+        }
 
-            var ps = new List<Product>();
-
-            foreach (var i in l) {
-                ps.Add(new Product() {
-                    Id = i.Id,
-                    Name = i.Name,
-                    Price = i.Price * 0.67,
-                    Type = "Lawnmower"
-                });
-            }
-
-            foreach (var i in p) {
-                ps.Add(new Product() {
-                    Id = i.Id,
-                    Name = i.Name,
-                    Price = i.Price * 0.67,
-                    Type = "Phone Case"
-                });
-            }
-
-            foreach (var i in t) {
-                ps.Add(new Product() {
-                    Id = i.Id,
-                    Name = i.Name,
-                    Price = i.Price * 0.67,
-                    Type = "T-Shirt"
-                });
-            }
-
-            return ps;
+		/// <summary>
+		/// Returns a list of consolidated products with their prices in Euros.
+		/// </summary>
+		/// <param name="exchangeRate"></param>
+		/// <returns></returns>
+		public List<Product> GetInEuros(double exchangeRate)
+        {
+	        return _GetInOtherCurrencies(exchangeRate);
         }
     }
 }

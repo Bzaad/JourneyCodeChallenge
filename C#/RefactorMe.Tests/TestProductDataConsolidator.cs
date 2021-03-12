@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using RefactorMe.DontRefactor.Data.Implementation;
 
 namespace RefactorMe.Tests
 {
@@ -6,14 +7,10 @@ namespace RefactorMe.Tests
 	public class TestProductDataConsolidator
 	{
 		[TestMethod]
-		public void TestClass1()
+		public void Test_GetProducts_MustReturnCorrectConsolidatedProducts()
 		{
-			var pdc = ProductDataConsolidator.Get();
-
-			pdc.ForEach(x =>
-			{
-				Assert.AreNotEqual(x.Id,0);
-			});
+			var consolidator = new ProductDataConsolidator();
+			var products = consolidator.GetProducts();
 		}
 	}
 }
