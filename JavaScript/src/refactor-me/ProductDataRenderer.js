@@ -1,6 +1,10 @@
 ﻿function ProductDataRenderer() { }
 
+/**
+ * A class for structuring the table template.
+ */
 class Table {
+
 	constructor(tableClass, name, headers, products){
 		this.tableClass = tableClass;
 		this.name = name;
@@ -8,18 +12,27 @@ class Table {
 		this.products = products;
 	}
 
+	/**
+	 * Returns the populated header template based on the table name and column headers.
+	 * @returns {headerTemplate} populated header template.
+	 */
 	GetHead = function(){
-		return `
-			<thead>
+		let headerTemplate = 
+			`<thead>
 				<tr><td colspan=${this.headers.length}>${this.name}</td></tr>
 				<tr>${this.headers.map(th => `<td>${th}</td>`).join("")}</tr>
-			</thead>
-			`;
+			</thead>`;
+
+		return headerTemplate;
 	}
 
+	/**
+	 * returns the populated body template base od the list of products.
+	 * @returns {bodyTemplate} populated body template
+	 */
 	GetBody = function() {
-		return `
-			<tbody>
+		let bodyTemplate = 
+			`<tbody>
 				${this.products.map(
 					p => `
 						<tr>
@@ -28,20 +41,30 @@ class Table {
 							<td>${p.type}</td>
 						</tr>
 				`).join("")}
-			</tbody>
-		`;
+			</tbody>`;
+
+			return bodyTemplate;
 	}
 
+	/**
+	 * Returns a populated table template by combining header and body templates.
+	 * @returns {tableTemplate} populated table template
+	 */
 	GetTable = function(){
-		return `
-			<table class=${this.tableClass}>
+		let tableTemplate = 
+		`<table class=${this.tableClass}>
 				${this.GetHead()}
 				${this.GetBody()}
 			</table>
 		`;
+		
+		return tableTemplate;
 	}
 }
 
+/**
+ * Adds the table template to the DOM.
+ */
 ProductDataRenderer.prototype.render = function () {
 	document.getElementById("nzdProducts").innerHTML = 
 		new Table("'table table-striped'", "Products (NZD)", ["Name", "Price","Type"], ProductDataConsolidator.get()).GetTable();

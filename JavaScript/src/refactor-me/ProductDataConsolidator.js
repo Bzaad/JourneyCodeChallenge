@@ -1,7 +1,6 @@
-﻿
-function ProductDataConsolidator() { }
-
-
+﻿/**
+ * A class for for formatting consolidated products.
+ */
 class Product {
 	constructor(id, name, price, type){
 		this.id = id;
@@ -9,120 +8,57 @@ class Product {
 		this.price = price
 		this.type = type;
 	}
+
+	/**
+	 * converts product price using the given currency exchange rate.
+	 * @param {exchangeRate} currency exchange rate
+	 * @returns {convertedProduct} product with converted price.
+	 */
+	ConvertCurrency = function (exchangeRate){
+		let convertedProduct = new Product(this.id, this.name, (this.price * exchangeRate).toFixed(2), this.type);
+		return convertedProduct;
+	}
 }
 
-ProductDataConsolidator.get = function () {
-	var lawnmowers = new LawnmowerRepository().getAll();
-	var phoneCases = new PhoneCaseRepository().getAll();
-	var tShirts = new TShirtRepository().getAll();
+/**
+ * Product Data Consolidator main method.
+ */
+function ProductDataConsolidator() { }
 
-	var products = [];
+/**
+ * Returns a list of consolidated products with their price in default currency (New Zealand Dollar)
+ * @returns {products} list of consolidated products
+ */
+ProductDataConsolidator.get = function () {
+	let lawnmowers = new LawnmowerRepository().getAll();
+	let phoneCases = new PhoneCaseRepository().getAll();
+	let tShirts = new TShirtRepository().getAll();
+
+	let products = [];
 	
 	lawnmowers.forEach(l => products.push(new Product(l.id, l.name, l.price.toFixed(2), "Lawnmower")));
-	phoneCases.forEach(p=> products.push(new Product(p.id, p.name, p.price.toFixed(2), "PhoneCase")));
+	phoneCases.forEach(p=> products.push(new Product(p.id, p.name, p.price.toFixed(2), "Phone Case")));
 	tShirts.forEach(t=> products.push(new Product(t.id, t.name, t.price.toFixed(2), "T-Shirt")));
 
-	console.log(typeof(phoneCases));
-	/*for (var i = 0; i < l.length; i++) {
-		products.push({
-			id: l[i].id,
-			name: l[i].name,
-			price: l[i].price.toFixed(2),
-			type: "Lawnmower"
-		});
-	}
-
-	for (var i = 0; i < p.length; i++) {
-		products.push({
-			id: p[i].id,
-			name: p[i].name,
-			price: p[i].price.toFixed(2),
-			type: "Phone Case"
-		});
-	}
-
-	for (var i = 0; i < t.length; i++) {
-		products.push({
-			id: t[i].id,
-			name: t[i].name,
-			price: t[i].price.toFixed(2),
-			type: "T-Shirt"
-		});
-	}*/
-
 	return products;
 }
 
+// Returns a list of consolidated products with their price converted to US Dollar.
+/**
+ * @returns {products} list of consolidated products with their currency converted to US Dollar.
+ */
 ProductDataConsolidator.getInUSDollars = function () {
-	var l = new LawnmowerRepository().getAll();
-	var p = new PhoneCaseRepository().getAll();
-	var t = new TShirtRepository().getAll();
-
-	var products = [];
-
-	for (var i = 0; i < l.length; i++) {
-		products.push({
-			id: l[i].id,
-			name: l[i].name,
-			price: (l[i].price * 0.76).toFixed(2),
-			type: "Lawnmower"
-		});
-	}
-
-	for (var i = 0; i < p.length; i++) {
-		products.push({
-			id: p[i].id,
-			name: p[i].name,
-			price: (p[i].price * 0.76).toFixed(2),
-			type: "Phone Case"
-		});
-	}
-
-	for (var i = 0; i < t.length; i++) {
-		products.push({
-			id: t[i].id,
-			name: t[i].name,
-			price: (t[i].price * 0.76).toFixed(2),
-			type: "T-Shirt"
-		});
-	}
-
-	return products;
+	let products = ProductDataConsolidator.get().map(p => p.ConvertCurrency(0.76));
+	return products
 }
 
+
+// Returns a list of consolidated products with their prices converted to Euros
+/**
+ * 
+ * @returns {products} list of consolidated products with their currency converted to Euro.
+ */
 ProductDataConsolidator.getInEuros = function () {
-	var l = new LawnmowerRepository().getAll();
-	var p = new PhoneCaseRepository().getAll();
-	var t = new TShirtRepository().getAll();
-
-	var products = [];
-
-	for (var i = 0; i < l.length; i++) {
-		products.push({
-			id: l[i].id,
-			name: l[i].name,
-			price: (l[i].price * 0.67).toFixed(2),
-			type: "Lawnmower"
-		});
-	}
-
-	for (var i = 0; i < p.length; i++) {
-		products.push({
-			id: p[i].id,
-			name: p[i].name,
-			price: (p[i].price * 0.67).toFixed(2),
-			type: "Phone Case"
-		});
-	}
-
-	for (var i = 0; i < t.length; i++) {
-		products.push({
-			id: t[i].id,
-			name: t[i].name,
-			price: (t[i].price * 0.67).toFixed(2),
-			type: "T-Shirt"
-		});
-	}
-
+	let products = ProductDataConsolidator.get().map(p => p.ConvertCurrency(0.67));
 	return products;
 }
