@@ -6,15 +6,16 @@ namespace RefactorMe.Tests
 	public class TestProductDataConsolidator
 	{
 		/// <summary>
-		/// 
+		/// Tests if products of different types exists in consolidated product list.
 		/// </summary>
 		[TestMethod]
 		public void Test_GetProducts_MustReturnCorrectConsolidatedProducts()
 		{
 			var consolidator = new ProductDataConsolidator();
 			var products = consolidator.GetProducts();
-			products.ForEach(p =>
-			{ });
+			Assert.IsTrue(products.Exists(p => p.Type.Equals("Lawnmower")));
+			Assert.IsTrue(products.Exists(p => p.Type.Equals("T-Shirt")));
+			Assert.IsTrue(products.Exists(p => p.Type.Equals("Phone Case")));
 		}
 
 		/// <summary>
@@ -25,11 +26,11 @@ namespace RefactorMe.Tests
 		{
 			var consolidator = new ProductDataConsolidator();
 			var products = consolidator.GetProducts();
-			var productsInDollar = consolidator.GetInUsDollars(0.76);
+			var productsInDollar = consolidator.GetInUsDollar(0.76);
 
-			productsInDollar.ForEach(x =>
+			productsInDollar.ForEach(pUsd =>
 			{
-
+				Assert.IsTrue(products.Exists(p => (p.Price * 0.76).Equals(pUsd.Price))); 
 			});
 		}
 
@@ -39,7 +40,14 @@ namespace RefactorMe.Tests
 		[TestMethod]
 		public void Test_GetInEuro_MustReturnCorrectConsolidatedProductsInEuro()
 		{
+			var consolidator = new ProductDataConsolidator();
+			var products = consolidator.GetProducts();
+			var productsInEuros = consolidator.GetInEuros(0.67);
 
+			productsInEuros.ForEach(pEuro =>
+			{
+				Assert.IsTrue(products.Exists(p => (p.Price * 0.67).Equals(pEuro.Price)));
+			});
 		}
 	}
 }

@@ -67,7 +67,7 @@ namespace RefactorMe
 		/// </summary>
 		/// <param name="usDollarExchangeRate"></param>
 		/// <returns></returns>
-		public List<Product> GetUsDollarExchangeRate(double usDollarExchangeRate)
+		public List<Product> GetInUsDollar(double usDollarExchangeRate)
         {
 	        return _GetInOtherCurrencies(usDollarExchangeRate);
         }
@@ -75,11 +75,11 @@ namespace RefactorMe
 		/// <summary>
 		/// Returns a list of consolidated products with their prices in Euros.
 		/// </summary>
-		/// <param name="EuroExchangeRate"></param>
+		/// <param name="euroExchangeRate"></param>
 		/// <returns></returns>
-		public List<Product> GetInEuros(double EuroExchangeRate)
+		public List<Product> GetInEuros(double euroExchangeRate)
         {
-	        return _GetInOtherCurrencies(EuroExchangeRate);
+	        return _GetInOtherCurrencies(euroExchangeRate);
         }
     }
 }
