@@ -1,75 +1,54 @@
 ﻿function ProductDataRenderer() { }
 
+class Table {
+	constructor(tableClass, name, headers, products){
+		this.tableClass = tableClass;
+		this.name = name;
+		this.headers = headers;
+		this.products = products;
+	}
+
+	GetHead = function(){
+		return `
+			<thead>
+				<tr><td colspan=${this.headers.length}>${this.name}</td></tr>
+				<tr>${this.headers.map(th => `<td>${th}</td>`).join("")}</tr>
+			</thead>
+			`;
+	}
+
+	GetBody = function() {
+		return `
+			<tbody>
+				${this.products.map(
+					p => `
+						<tr>
+							<td>${p.name}</td>
+							<td>${p.price}</td>
+							<td>${p.type}</td>
+						</tr>
+				`).join("")}
+			</tbody>
+		`;
+	}
+
+	GetTable = function(){
+		return `
+			<table class=${this.tableClass}>
+				${this.GetHead()}
+				${this.GetBody()}
+			</table>
+		`;
+	}
+}
+
 ProductDataRenderer.prototype.render = function () {
-	var nzd = 
-		'<table class="table table-striped">'
-		+'	<thead>'
-		+'		<tr><td colspan="3">Products (NZD)</td></tr>'
-		+'		<tr>'
-		+'			<td>Name</td>'
-		+'			<td>Price</td>'
-		+'			<td>Type</td>'
-		+'		</tr>'
-		+'	</thead>'
-		+ '	<tbody>';
-
-	var n = ProductDataConsolidator.get();
-	for (var i = 0; i < n.length; i++) {
-		nzd +=
-			'<tr>'
-		+		'<td>' + n[i].name +'</td>'
-		+		'<td>' + n[i].price + '</td>'
-		+		'<td>' + n[i].type + '</td>'
-		+	'</tr>';
-	}
-	nzd += '</tbody></table>';
-	document.getElementById("nzdProducts").innerHTML = nzd;
-
-	var usd =
-		'<table class="table table-striped">'
-		+ '	<thead>'
-		+ '		<tr><td colspan="3">Products (USD)</td></tr>'
-		+ '		<tr>'
-		+ '			<td>Name</td>'
-		+ '			<td>Price</td>'
-		+ '			<td>Type</td>'
-		+ '		</tr>'
-		+ '	</thead>'
-		+ '	<tbody>';
-
-	var u = ProductDataConsolidator.getInUSDollars();
-	for (var i = 0; i < u.length; i++) {
-		usd +=
-			'<tr>'
-		+		'<td>' + u[i].name + '</td>'
-		+		'<td>' + u[i].price + '</td>'
-		+		'<td>' + u[i].type + '</td>'
-		+ '</tr>';
-	}
-	usd += '</tbody></table>';
-	document.getElementById("usdProducts").innerHTML = usd;
-
-	var euro =
-		'<table class="table table-striped">'
-		+ '	<thead>'
-		+ '		<tr><td colspan="3">Products (Euro)</td></tr>'
-		+ '		<tr>'
-		+ '			<td>Name</td>'
-		+ '			<td>Price</td>'
-		+ '			<td>Type</td>'
-		+ '		</tr>'
-		+ '	</thead>'
-		+ '	<tbody>';
-
-	var e = ProductDataConsolidator.getInEuros();
-	for (var i = 0; i < e.length; i++) {
-		euro +=
-			'<tr>'
-		+		'<td>' + e[i].name + '</td>'
-		+		'<td>' + e[i].price + '</td>'
-		+		'<td>' + e[i].type + '</td>'
-		+ '</tr>';
-	}
-	euro += '</tbody></table>';
-	document.getElementById("euProducts").innerHTML = euro;
+	document.getElementById("nzdProducts").innerHTML = 
+		new Table("'table table-striped'", "Products (NZD)", ["Name", "Price","Type"], ProductDataConsolidator.get()).GetTable();
+	
+	document.getElementById("usdProducts").innerHTML = 
+		new Table("'table table-striped'", "Products (USD)", ["Name", "Price","Type"], ProductDataConsolidator.getInUSDollars()).GetTable();
+	
+	document.getElementById("euProducts").innerHTML = 
+		new Table("'table table-striped'", "Products (Euro)", ["Name", "Price","Type"], ProductDataConsolidator.getInEuros()).GetTable();
 }
