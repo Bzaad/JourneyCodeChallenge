@@ -13,6 +13,8 @@ namespace RefactorMe.Tests
 		{
 			var consolidator = new ProductDataConsolidator();
 			var products = consolidator.GetProducts();
+			products.ForEach(p =>
+			{ });
 		}
 
 		/// <summary>
@@ -21,7 +23,14 @@ namespace RefactorMe.Tests
 		[TestMethod]
 		public void Test_GetInDollars_MustReturnCorrectConsolidatedProductsInUsDollar()
 		{
+			var consolidator = new ProductDataConsolidator();
+			var products = consolidator.GetProducts();
+			var productsInDollar = consolidator.GetInUsDollars(0.76);
 
+			productsInDollar.ForEach(x =>
+			{
+
+			});
 		}
 
 		/// <summary>
