@@ -19,7 +19,7 @@ namespace RefactorMe.Tests
 		}
 
 		/// <summary>
-		/// 
+		/// Tests if the method is returning the correct consolidated product list in US Dollar.
 		/// </summary>
 		[TestMethod]
 		public void Test_GetInDollars_MustReturnCorrectConsolidatedProductsInUsDollar()
@@ -35,7 +35,7 @@ namespace RefactorMe.Tests
 		}
 
 		/// <summary>
-		/// 
+		/// Tests if the method is returning the correct consolidated product list in Euro.
 		/// </summary>
 		[TestMethod]
 		public void Test_GetInEuro_MustReturnCorrectConsolidatedProductsInEuro()
