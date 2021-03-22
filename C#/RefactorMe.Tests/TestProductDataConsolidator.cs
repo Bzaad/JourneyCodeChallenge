@@ -1,4 +1,10 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using RefactorMe.DontRefactor.Data.Implementation;
+using RefactorMe.DontRefactor.Models;
 
 namespace RefactorMe.Tests
 {
@@ -11,8 +17,10 @@ namespace RefactorMe.Tests
 		[TestMethod]
 		public void Test_GetProducts_MustReturnCorrectConsolidatedProducts()
 		{
-			var consolidator = new ProductDataConsolidator();
-			var products = consolidator.GetProducts();
+			var productDataConsolidator = new ProductDataConsolidator();
+			List<object> allProducts = new List<object>();
+
+			var products = productDataConsolidator.GetProducts(allProducts);
 			Assert.IsTrue(products.Exists(p => p.Type.Equals("Lawnmower")));
 			Assert.IsTrue(products.Exists(p => p.Type.Equals("T-Shirt")));
 			Assert.IsTrue(products.Exists(p => p.Type.Equals("Phone Case")));
@@ -24,9 +32,11 @@ namespace RefactorMe.Tests
 		[TestMethod]
 		public void Test_GetInDollars_MustReturnCorrectConsolidatedProductsInUsDollar()
 		{
-			var consolidator = new ProductDataConsolidator();
-			var products = consolidator.GetProducts();
-			var productsInDollar = consolidator.GetInUsDollar(0.76);
+			var productDataConsolidator = new ProductDataConsolidator();
+			List<object> allProducts = new List<object>();
+
+			var products = productDataConsolidator.GetProducts(allProducts);
+			var productsInDollar = new ProductCurrencyConvertor(products).GetInUsDollar(0.76);
 
 			productsInDollar.ForEach(pUsd =>
 			{
@@ -40,14 +50,24 @@ namespace RefactorMe.Tests
 		[TestMethod]
 		public void Test_GetInEuro_MustReturnCorrectConsolidatedProductsInEuro()
 		{
-			var consolidator = new ProductDataConsolidator();
-			var products = consolidator.GetProducts();
-			var productsInEuros = consolidator.GetInEuros(0.67);
+			var productDataConsolidator = new ProductDataConsolidator();
+			List<object> allProducts = new List<object>();
+
+			var products = productDataConsolidator.GetProducts(allProducts);
+			var productsInEuros = new ProductCurrencyConvertor(products).GetInUsDollar(0.67);
 
 			productsInEuros.ForEach(pEuro =>
 			{
 				Assert.IsTrue(products.Exists(p => (p.Price * 0.67).Equals(pEuro.Price)));
 			});
+		}
+
+		[TestMethod]
+		public void ConsolidatorTest()
+		{
+			var pc = new ProductDataConsolidator();
+			var products = new LawnmowerRepository().GetAll();
+			pc.GetProducts((List<object>) products.ToList());
 		}
 	}
 }

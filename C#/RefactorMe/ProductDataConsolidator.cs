@@ -6,80 +6,67 @@ using System.Linq;
 
 namespace RefactorMe
 {
+	public interface IProduct
+	{
+		int ID { get; set; }
+		string Name { get; set; }
+		double Price { get; set; }
+		string Type { get; set; }
+	}
+
 	public class ProductDataConsolidator
     {
-	    private string _GetTypeString(object obj)
-	    {
-		    switch (obj.GetType().Name)
-		    {
-				case "Lawnmower":
-					return "Lawnmower";
-				case "PhoneCase":
-					return "Phone Case";
-				case "TShirt":
-					return "T-Shirt";
-				default:
-					throw new NotSupportedException("The product type is not supported");
-		    }
-	    }
+		public ProductTypeBuilder ProductTypeBuilder { get; set; } = new ProductTypeBuilder();
 
-	    /// <summary>
+		private List<Product> ConsolidatedProducts { get; set; } = new List<Product>();
+
+		/*private void _AddConsolidatedProduct(Guid id, string name, double price, string type)
+		{
+			this.ConsolidatedProducts.Add(new Product {Id = id, Name = name, Price = price, Type = type});
+		}*/
+
+		private void _AddConsolidatedProduct(IProduct product, string type)
+		{
+			Console.WriteLine(product.ToString());
+		}
+
+		/// <summary>
 		/// Returns a list of consolidated products.
 		/// </summary>
+		/// <param name="unconsolidatedProducts"></param>
 		/// <returns></returns>
-        public List<Product> GetProducts() {
-	        
-	        var products =
-				new LawnmowerRepository().GetAll().Select(l => new Product
-			{Id = l.Id, Name = l.Name, Price = l.Price, Type = _GetTypeString(l)})
-		.Concat(new PhoneCaseRepository().GetAll().Select(pc => new Product
-			{Id = pc.Id, Name = pc.Name, Price = pc.Price, Type = _GetTypeString(pc)}))
-		.Concat(new TShirtRepository().GetAll().Select(ts => new Product
-			{Id = ts.Id, Name = ts.Name, Price = ts.Price, Type = _GetTypeString(ts)}));
+		public List<Product> GetProducts(List<object> unconsolidatedProducts)
+		{
+			unconsolidatedProducts.ForEach(p =>
+			{
+				var type = ProductTypeBuilder.GetTypeString(p);
+				p = (IProduct) p;
 
-	        return products.ToList();
-        }
-
-		/// <summary>
-		/// Returns a list of consolidated products in some other currency with the given exchange rate.
-		/// </summary>
-		/// <param name="exchangeRate"></param>
-		/// <returns></returns>
-		private List<Product> _GetInOtherCurrencies(double exchangeRate) 
-        {
-	        var ps = new List<Product>();
-
-	        GetProducts().ForEach(prod =>
-	        {
-		        ps.Add(new Product()
-		        {
-			        Id = prod.Id,
-			        Name = prod.Name,
-			        Price = prod.Price * exchangeRate,
-			        Type = prod.Type
-		        });
-	        });
-	        return ps;
-        }
-
-		/// <summary>
-		/// Returns a list of consolidated products with their prices in US Dollar.
-		/// </summary>
-		/// <param name="usDollarExchangeRate"></param>
-		/// <returns></returns>
-		public List<Product> GetInUsDollar(double usDollarExchangeRate)
-        {
-	        return _GetInOtherCurrencies(usDollarExchangeRate);
-        }
-
-		/// <summary>
-		/// Returns a list of consolidated products with their prices in Euros.
-		/// </summary>
-		/// <param name="euroExchangeRate"></param>
-		/// <returns></returns>
-		public List<Product> GetInEuros(double euroExchangeRate)
-        {
-	        return _GetInOtherCurrencies(euroExchangeRate);
-        }
+				switch (type)
+				{
+					case "Lawnmower":
+						var l = (IProduct) p;
+						this._AddConsolidatedProduct(l, type);
+						break;
+					case "T-Shirt":
+						var ts = (IProduct) p;
+						this._AddConsolidatedProduct(ts, type);
+						break;
+					case "Phone Case":
+						this._AddConsolidatedProduct((IProduct) p, type);
+						break;
+					default:
+						throw new NotSupportedException("The product type is not supported");
+				}
+			});
+			return this.ConsolidatedProducts;
+			/*
+		    return new LawnmowerRepository().GetAll().Select(l => new Product
+			    {Id = l.Id, Name = l.Name, Price = l.Price, Type = ProductTypeBuilder.GetTypeString(l)})
+		    .Concat(new PhoneCaseRepository().GetAll().Select(pc => new Product
+				{Id = pc.Id, Name = pc.Name, Price = pc.Price, Type = ProductTypeBuilder.GetTypeString(pc)})
+			.Concat(new TShirtRepository().GetAll().Select(ts => new Product
+				{Id = ts.Id, Name = ts.Name, Price = ts.Price, Type = ProductTypeBuilder.GetTypeString(ts)}))).ToList();*/
+		}
     }
 }
